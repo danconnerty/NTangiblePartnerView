@@ -14,6 +14,7 @@ const lastNames = [
 ];
 
 const positions = ['Pitcher', 'Catcher', 'Infielder', 'Outfielder', 'Shortstop', 'First Base', 'Third Base'];
+const levels = ['HS', 'NCAA', 'JUCO', 'Pro'];
 const statuses: Player['status'][] = ['active', 'inactive', 'pending'];
 
 const generatePlayers = (count: number): Player[] => {
@@ -27,20 +28,36 @@ const generatePlayers = (count: number): Player[] => {
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const gradYear = 2025 + Math.floor(Math.random() * 6); // 2025 to 2030
     
-    // Generate a random date within the last 6 months
     const randomTime = sixMonthsAgo.getTime() + Math.random() * (today.getTime() - sixMonthsAgo.getTime());
     const lastTestedDate = new Date(randomTime).toISOString();
+
+    const clutchFactor = 400 + Math.floor(Math.random() * 500);
+    
+    let scoringRange = 'Below Average';
+    if (clutchFactor >= 800) {
+      scoringRange = 'Elite';
+    } else if (clutchFactor >= 751) {
+      scoringRange = 'Great';
+    } else if (clutchFactor >= 725) {
+      scoringRange = 'Above Average';
+    } else if (clutchFactor >= 651) {
+      scoringRange = 'Average';
+    }
 
     players.push({
       id: `${i + 1}`,
       name: `${lastName}, ${firstName}`,
       position: positions[Math.floor(Math.random() * positions.length)],
       round: 'Demo',
+      level: levels[Math.floor(Math.random() * levels.length)],
       graduationYear: gradYear,
-      clutchFactor: 400 + Math.floor(Math.random() * 500),
+      clutchFactor: clutchFactor,
       status: statuses[Math.floor(Math.random() * statuses.length)],
-      needsRetest: Math.random() > 0.7, // 30% chance they need a retest
-      lastTestedDate: lastTestedDate
+      needsRetest: Math.random() > 0.7,
+      lastTestedDate: lastTestedDate,
+      scoringRange: scoringRange,
+      roundRank: Math.floor(Math.random() * 20) + 1,
+      roundPositionalRank: Math.floor(Math.random() * 10) + 1
     });
   }
   return players.sort((a, b) => a.name.localeCompare(b.name));
