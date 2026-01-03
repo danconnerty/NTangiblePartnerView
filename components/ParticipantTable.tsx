@@ -5,15 +5,20 @@ import { Player } from '../types';
 import { MOCK_PLAYERS } from '../mockData';
 import ScoutingModal from './ScoutingModal';
 
-type SortField = 'graduationYear' | 'clutchFactor' | 'name' | 'position' | 'lastTestedDate';
+type SortField = 'graduationYear' | 'clutchFactor' | 'name' | 'position' | 'lastTestedDate' | 'level';
 type SortDirection = 'asc' | 'desc';
 
 interface ParticipantTableProps {
   externalPosition?: string;
   externalGradYear?: string;
+  externalLevel?: string;
 }
 
-const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 'All', externalGradYear = 'All' }) => {
+const ParticipantTable: React.FC<ParticipantTableProps> = ({ 
+  externalPosition = 'All', 
+  externalGradYear = 'All',
+  externalLevel = 'All' 
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('lastTestedDate');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -51,7 +56,12 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
       result = result.filter(p => String(p.graduationYear) === externalGradYear);
     }
 
-    // 4. Sorting logic
+    // 4. Level Filter (from props)
+    if (externalLevel !== 'All') {
+      result = result.filter(p => p.level === externalLevel);
+    }
+
+    // 5. Sorting logic
     result.sort((a, b) => {
       const valA = a[sortField] ?? '';
       const valB = b[sortField] ?? '';
@@ -62,7 +72,7 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
     });
 
     return result;
-  }, [searchQuery, externalPosition, externalGradYear, sortField, sortDirection]);
+  }, [searchQuery, externalPosition, externalGradYear, externalLevel, sortField, sortDirection]);
 
   const SortIndicator = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <ChevronDown size={14} className="opacity-20" />;
@@ -90,7 +100,7 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
       </div>
 
       <div className="overflow-x-auto max-h-[700px] scrollbar-thin scrollbar-thumb-gray-200">
-        <table className="w-full text-left table-fixed min-w-[800px]">
+        <table className="w-full text-left table-fixed min-w-[900px]">
           <thead className="sticky top-0 bg-white z-20 shadow-sm border-b border-gray-100">
             <tr>
               <th 
@@ -107,6 +117,14 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
               >
                  <div className="flex items-center gap-1">
                   Position <SortIndicator field="position" />
+                </div>
+              </th>
+               <th 
+                className="w-1/6 px-6 py-4 text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => handleSort('level')}
+              >
+                 <div className="flex items-center gap-1">
+                  Level <SortIndicator field="level" />
                 </div>
               </th>
               <th 
@@ -152,6 +170,11 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {player.position}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <span className="inline-block bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-medium">
+                      {player.level}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
                     {player.graduationYear}
                   </td>
@@ -168,7 +191,7 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({ externalPosition = 
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-6 py-20 text-center">
+                <td colSpan={6} className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center gap-2 text-gray-400">
                     <p className="italic text-sm">No athletes found matching your current filters.</p>
                   </div>
