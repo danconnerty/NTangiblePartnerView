@@ -20,7 +20,8 @@ const ParticipantTable: React.FC<ParticipantTableProps> = ({
   externalLevel = 'All' 
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState<SortField>('lastTestedDate');
+  // Changed default sort to clutchFactor descending (highest to lowest)
+  const [sortField, setSortField] = useState<SortField>('clutchFactor');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
