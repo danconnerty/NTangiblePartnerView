@@ -10,6 +10,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [filterPosition, setFilterPosition] = useState('All');
   const [filterGradYear, setFilterGradYear] = useState('All');
+  const [filterLevel, setFilterLevel] = useState('All');
 
   // Handle browser back/forward buttons (basic routing simulation)
   useEffect(() => {
@@ -36,6 +37,7 @@ const App: React.FC = () => {
   const handleResetFilters = () => {
     setFilterPosition('All');
     setFilterGradYear('All');
+    setFilterLevel('All');
   };
 
   const renderContent = () => {
@@ -73,6 +75,8 @@ const App: React.FC = () => {
                   onPositionChange={setFilterPosition}
                   selectedGradYear={filterGradYear}
                   onGradYearChange={setFilterGradYear}
+                  selectedLevel={filterLevel}
+                  onLevelChange={setFilterLevel}
                   onReset={handleResetFilters}
                 />
               </aside>
@@ -82,6 +86,7 @@ const App: React.FC = () => {
                 <ParticipantTable 
                   externalPosition={filterPosition} 
                   externalGradYear={filterGradYear} 
+                  externalLevel={filterLevel}
                 />
               </div>
             </div>
